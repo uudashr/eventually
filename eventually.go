@@ -80,9 +80,6 @@ func (e *Eventually) emit(event Event) {
 
 	handlers := e.handlers[eventType]
 	for _, handler := range handlers {
-		// fnVal := reflect.ValueOf(handler)
-		// eventVal := reflect.ValueOf(event)
-		// fnVal.Call([]reflect.Value{eventVal})
 		invokeHandler(handler, event)
 	}
 }
@@ -94,9 +91,6 @@ func (e *Eventually) HandleEvent(fn EventHandler) {
 	fnTypeIn := fnType.In(0)
 	for _, event := range e.events {
 		if reflect.TypeOf(event) == fnTypeIn {
-			// fnVal := reflect.ValueOf(fn)
-			// eventVal := reflect.ValueOf(event)
-			// fnVal.Call([]reflect.Value{eventVal})
 			invokeHandler(fn, event)
 		}
 	}
