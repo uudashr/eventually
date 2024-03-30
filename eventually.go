@@ -66,10 +66,15 @@ func (e *Eventually) RemoveHandler(fn EventHandler) {
 }
 
 // RaiseEvent add the event to the list of events.
-func (e *Eventually) RaiseEvent(event Event) {
-	ensureValidEvent(event)
+func (e *Eventually) RaiseEvent(event Event) error {
+	err := validateEvent(event)
+	if err != nil {
+		return err
+	}
+
 	e.events = append(e.events, event)
 	e.emit(event)
+	return nil
 }
 
 func (e *Eventually) emit(event Event) {
@@ -85,8 +90,12 @@ func (e *Eventually) emit(event Event) {
 }
 
 // HandleEvent handle the raised events with the given handler.
-func (e *Eventually) HandleEvent(fn EventHandler) {
-	ensureValidHandler(fn)
+func (e *Eventually) HandleEvent(fn EventHandler) error {
+	err := validateHandler(fn)
+	if err != nil {
+		return err
+	}
+
 	fnType := reflect.TypeOf(fn)
 	fnTypeIn := fnType.In(0)
 	for _, event := range e.events {
@@ -94,17 +103,20 @@ func (e *Eventually) HandleEvent(fn EventHandler) {
 			invokeHandler(fn, event)
 		}
 	}
+	return nil
 }
 
 func (e *Eventually) Events() []Event {
 	return e.events
 }
 
-func ensureValidEvent(event Event) {
+func validateEvent(event Event) error {
 	eventType := reflect.TypeOf(event)
 	if eventType.Kind() != reflect.Struct {
-		panic(fmt.Errorf("eventually: event should be a struct (got: %v)", eventType.Kind()))
+		return fmt.Errorf("eventually: event should be a struct (got: %v)", eventType.Kind())
 	}
+
+	return nil
 }
 
 func invokeHandler(handler EventHandler, event Event) {
