@@ -153,19 +153,15 @@ func validateHandler(fn EventHandler) error {
 	return nil
 }
 
-type contextKey string
-
-const (
-	contextKeyEventually contextKey = "eventually"
-)
+type contextKey struct{}
 
 func WithContext(ctx context.Context, evtl *Eventually) context.Context {
-	return context.WithValue(ctx, contextKeyEventually, evtl)
+	return context.WithValue(ctx, contextKey{}, evtl)
 }
 
 // RaiseEvent raise the event to the eventually in the context.
 func RaiseEvent(ctx context.Context, event Event) error {
-	evtl, ok := ctx.Value(contextKeyEventually).(*Eventually)
+	evtl, ok := ctx.Value(contextKey{}).(*Eventually)
 	if !ok {
 		return errors.New("eventually: context does not have eventually")
 	}
@@ -175,7 +171,7 @@ func RaiseEvent(ctx context.Context, event Event) error {
 }
 
 func React(ctx context.Context, fn EventHandler) error {
-	evtl, ok := ctx.Value(contextKeyEventually).(*Eventually)
+	evtl, ok := ctx.Value(contextKey{}).(*Eventually)
 	if !ok {
 		return errors.New("eventually: context does not have eventually")
 	}
@@ -186,7 +182,7 @@ func React(ctx context.Context, fn EventHandler) error {
 
 // HandleEvent handle the raised events with the given handler in the eventually in the context.
 func HandleEvent(ctx context.Context, fn EventHandler) error {
-	evtl, ok := ctx.Value(contextKeyEventually).(*Eventually)
+	evtl, ok := ctx.Value(contextKey{}).(*Eventually)
 	if !ok {
 		return errors.New("eventually: context does not have eventually")
 	}
