@@ -1,7 +1,7 @@
 [![Go Reference](https://pkg.go.dev/badge/github.com/uudashr/eventually.svg)](https://pkg.go.dev/github.com/uudashr/eventually)
 
 # Eventually
-Eventually provides a flexible event handling framework that enables applications to react to various types of events dynamically. The core functionality revolves around defining, raising, and handling events that are structured as Go structs.
+Eventually provides a flexible event handling library that enables applications to react to various types of events dynamically. The core functionality revolves around defining, raising, and handling events that are structured as Go structs.
 
 ## Usage
 

@@ -1,4 +1,4 @@
-// Package eventually provides a flexible event handling framework that enables
+// Package eventually provides a flexible event handling library that enables
 // applications to react to various types of events dynamically. The core
 // functionality revolves around defining, raising, and handling events that are
 // structured as Go structs.
