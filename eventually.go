@@ -13,29 +13,35 @@ import (
 // Example:
 //
 //	type OrderCompleted struct {
-//		OrderID string
+//	  OrderID string
 //	}
 type Event any
 
 // EventHandle is a function type that handle the event.
-// The function form is:
 //
-//		func(event Event)
+// The form of function is:
 //
-//	 where the Event is the event type (struct) that will be handled.
+//	func(event Event)
+//
+// where the [Event] is the event type (struct) that will be handled.
 //
 // Example:
 //
 //	eventually.HandleEvent(func(event OrderCompleted) {
-//		// handle the event
+//	  // handle the event
 //	})
 type EventHandler any
 
+// Eventually is responsible for managing the lifecycle of events and their
+// handlers.
 type Eventually struct {
 	events   []Event
 	handlers map[reflect.Type][]EventHandler
 }
 
+// React reacting to the event with the given fn as the handler. It will only
+// react to the new raised event. Past events will not be handled by the fn
+// handler.
 func (e *Eventually) React(fn EventHandler) {
 	ensureValidHandler(fn)
 	if e.handlers == nil {
@@ -47,6 +53,9 @@ func (e *Eventually) React(fn EventHandler) {
 	e.handlers[fnTypeIn] = append(e.handlers[fnTypeIn], fn)
 }
 
+// RemoveHandler remove the handler from the list of handlers which previously
+// registed via [Eventually.React]. Subsequent raised events will not longer be
+// handled by the fn handler.
 func (e *Eventually) RemoveHandler(fn EventHandler) {
 	ensureValidHandler(fn)
 
@@ -89,7 +98,8 @@ func (e *Eventually) emit(event Event) {
 	}
 }
 
-// HandleEvent handle the raised events with the given handler.
+// HandleEvent handle the raised events with the given handler. The fn handler
+// will not be registerd, it will not be called for the new raised event.
 func (e *Eventually) HandleEvent(fn EventHandler) error {
 	err := validateHandler(fn)
 	if err != nil {
@@ -106,6 +116,7 @@ func (e *Eventually) HandleEvent(fn EventHandler) error {
 	return nil
 }
 
+// Events return the list of events that have been raised.
 func (e *Eventually) Events() []Event {
 	return e.events
 }
@@ -155,11 +166,12 @@ func validateHandler(fn EventHandler) error {
 
 type contextKey struct{}
 
+// WithContext return a new context with the evtl.
 func WithContext(ctx context.Context, evtl *Eventually) context.Context {
 	return context.WithValue(ctx, contextKey{}, evtl)
 }
 
-// RaiseEvent raise the event to the eventually in the context.
+// RaiseEvent raise the event to the eventually in the ctx.
 func RaiseEvent(ctx context.Context, event Event) error {
 	evtl, ok := ctx.Value(contextKey{}).(*Eventually)
 	if !ok {
@@ -170,6 +182,8 @@ func RaiseEvent(ctx context.Context, event Event) error {
 	return nil
 }
 
+// React reacting to the event with the given fn as the handler of [Eventually]
+// in the ctx.
 func React(ctx context.Context, fn EventHandler) error {
 	evtl, ok := ctx.Value(contextKey{}).(*Eventually)
 	if !ok {
@@ -180,7 +194,8 @@ func React(ctx context.Context, fn EventHandler) error {
 	return nil
 }
 
-// HandleEvent handle the raised events with the given handler in the eventually in the context.
+// HandleEvent handle the raised events with the given handler in the eventually
+// in the ctx.
 func HandleEvent(ctx context.Context, fn EventHandler) error {
 	evtl, ok := ctx.Value(contextKey{}).(*Eventually)
 	if !ok {
