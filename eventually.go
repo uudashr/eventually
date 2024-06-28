@@ -44,6 +44,7 @@ type Eventually struct {
 // handler.
 func (e *Eventually) React(fn EventHandler) {
 	ensureValidHandler(fn)
+
 	if e.handlers == nil {
 		e.handlers = make(map[reflect.Type][]EventHandler)
 	}
@@ -54,13 +55,14 @@ func (e *Eventually) React(fn EventHandler) {
 }
 
 // RemoveHandler remove the handler from the list of handlers which previously
-// registed via [Eventually.React]. Subsequent raised events will not longer be
+// registered via [Eventually.React]. Subsequent raised events will not longer be
 // handled by the fn handler.
 func (e *Eventually) RemoveHandler(fn EventHandler) {
 	ensureValidHandler(fn)
 
 	fnType := reflect.TypeOf(fn)
 	fnTypeIn := fnType.In(0)
+
 	handlers := e.handlers[fnTypeIn]
 	if handlers == nil {
 		return
@@ -69,6 +71,7 @@ func (e *Eventually) RemoveHandler(fn EventHandler) {
 	for i, handler := range handlers {
 		if reflect.ValueOf(handler).Pointer() == reflect.ValueOf(fn).Pointer() {
 			e.handlers[fnTypeIn] = append(handlers[:i], handlers[i+1:]...)
+
 			return
 		}
 	}
@@ -83,6 +86,7 @@ func (e *Eventually) RaiseEvent(event Event) error {
 
 	e.events = append(e.events, event)
 	e.emit(event)
+
 	return nil
 }
 
@@ -99,7 +103,7 @@ func (e *Eventually) emit(event Event) {
 }
 
 // HandleEvent handle the raised events with the given handler. The fn handler
-// will not be registerd, it will not be called for the new raised event.
+// will not be registered, it will not be called for the new raised event.
 func (e *Eventually) HandleEvent(fn EventHandler) error {
 	err := validateHandler(fn)
 	if err != nil {
@@ -108,11 +112,13 @@ func (e *Eventually) HandleEvent(fn EventHandler) error {
 
 	fnType := reflect.TypeOf(fn)
 	fnTypeIn := fnType.In(0)
+
 	for _, event := range e.events {
 		if reflect.TypeOf(event) == fnTypeIn {
 			invokeHandler(fn, event)
 		}
 	}
+
 	return nil
 }
 
@@ -178,8 +184,7 @@ func RaiseEvent(ctx context.Context, event Event) error {
 		return errors.New("eventually: context does not have eventually")
 	}
 
-	evtl.RaiseEvent(event)
-	return nil
+	return evtl.RaiseEvent(event)
 }
 
 // React reacting to the event with the given fn as the handler of [Eventually]
@@ -191,6 +196,7 @@ func React(ctx context.Context, fn EventHandler) error {
 	}
 
 	evtl.React(fn)
+
 	return nil
 }
 
@@ -202,6 +208,5 @@ func HandleEvent(ctx context.Context, fn EventHandler) error {
 		return errors.New("eventually: context does not have eventually")
 	}
 
-	evtl.HandleEvent(fn)
-	return nil
+	return evtl.HandleEvent(fn)
 }
