@@ -1,66 +1,9 @@
 package eventually_test
 
 import (
-	"context"
-	"fmt"
 	"reflect"
 	"testing"
-
-	"github.com/uudashr/eventually"
 )
-
-func ExampleEventually() {
-	type OrderCompleted struct {
-		OrderID string
-	}
-
-	var sendOrderCompleteNotification = func(orderID string) {
-		fmt.Printf("Your order %q has been completed\n", orderID)
-	}
-
-	evtl := &eventually.Eventually{}
-
-	// ReaiseEvent accept any kind of struct type
-	evtl.RaiseEvent(OrderCompleted{OrderID: "order-123"})
-
-	// HandleEvent accept any kind of func with any struct type as the argument
-	evtl.HandleEvent(func(event OrderCompleted) {
-		sendOrderCompleteNotification(event.OrderID)
-	})
-
-	// Output:
-	// Your order "order-123" has been completed
-}
-
-func ExampleHandleEvent() {
-	type OrderCompleted struct {
-		OrderID string
-	}
-
-	var sendOrderCompleteNotification = func(orderID string) {
-		fmt.Printf("Your order %q has been completed\n", orderID)
-	}
-
-	evtl := &eventually.Eventually{}
-
-	ctx := eventually.WithContext(context.Background(), evtl)
-
-	// react immediately
-	eventually.React(ctx, func(event OrderCompleted) {
-		fmt.Printf("Reacting to OrderCompleted event: %q\n", event.OrderID)
-	})
-
-	eventually.RaiseEvent(ctx, OrderCompleted{OrderID: "order-123"})
-
-	// handle the raised events
-	eventually.HandleEvent(ctx, func(event OrderCompleted) {
-		sendOrderCompleteNotification(event.OrderID)
-	})
-
-	// Output:
-	// Reacting to OrderCompleted event: "order-123"
-	// Your order "order-123" has been completed
-}
 
 func TestReflect(t *testing.T) {
 	type OrderCompleted struct {

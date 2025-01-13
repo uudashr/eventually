@@ -11,8 +11,8 @@ Eventually provides a flexible event handling library that enables applications 
 ```go
 ctx := context.TODO()
 
-evtl := &eventually.Eventually{}
-ctx = eventually.WithContext(ctx)
+var pub eventually.Publisher // either eventually.PubMux or eventually.Recorder
+ctx = eventually.PubWithContext(ctx, pub)
 ```
 
 Eventually setup and put inside the context.Context.
@@ -29,7 +29,7 @@ Event was defined as struct. The struct can have any fields that represent the e
 ### Raising an Event
 
 ```go
-eventually.RaiseEvent(ctx, OrderCompleted{
+eventually.Publish(ctx, OrderCompleted{
     OrderID: "123",
 })
 ```
@@ -39,7 +39,8 @@ Raising event using eventually available in the context. It does nothing if the 
 ## Handling Events
 
 ```go
-evtl.HandleEvent(func(e OrderCompleted) {
+pubMux := &eventually.PubMux{}
+pubMux.React(func(e OrderCompleted) {
     fmt.Printf("Order completed: %q\n", e.OrderID)
 })
 ```

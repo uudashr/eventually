@@ -35,36 +35,27 @@
 //	  fmt.Println("Order completed:", event.OrderID)
 //	}
 //
-// # Eventually
+// # PubMux
 //
 // The central struct in the package, responsible for managing the lifecycle of
 // events and their handlers. It provides methods to raise events, add or remove
 // event handlers, and process events through their respective handlers.
 //
-// Event handlers are registered to an instance of [Eventually] using the
-// [Eventually.React] method. This setup allows the [Eventually] instance to
+// Event handlers are registered to an instance of [PubMux] using the
+// [PubMux.React] method. This setup allows the [PubMux] instance to
 // call the handler when the corresponding event type is raised.
 //
-// Events are raised using the [Eventually.RaiseEvent] method on an [Eventually]
-// instance. When an event is raised, all handlers registered for that event
-// type are invoked with the event as a parameter.
-//
-// The package also provides functionality to store and retrieve an [Eventually]
-// instance from a context.Context object, facilitating the passing of the event
-// handling framework through request or operation contexts in more complex
-// applications.
-//
-// This package is ideal for applications that require a modular and dynamic
-// approach to handling events where the types of events are not known at
-// compile time.
+// Events are publish using the [PubMux.Publish]. When an event is publish,
+// all registered handlers for that event will be invoked with the event as the
+// parameter.
 //
 // Example:
 //
 //	func main() {
-//	  evtl := &eventually.Eventually{}
+//	  pubMux := &eventually.PubMux{}
 //
 //	  // Register the event handler
-//	  evtl.React(handleOrderCompleted)
+//	  pubMux.React(handleOrderCompleted)
 //
 //	  // Raise an event
 //	  evtl.RaiseEvent(OrderCompleted{OrderID: "1234"})
