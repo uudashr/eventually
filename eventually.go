@@ -36,7 +36,12 @@ func Publish(ctx context.Context, event Event) error {
 	return pub.Publish(event)
 }
 
-// MustPublish publish the event. Will panic upon error found.
+// OptPublish publish the event if the Publisher is available in the context.
+func OptPublish(ctx context.Context, event Event) {
+	_ = Publish(ctx, event)
+}
+
+// MustPublish publish the event. It will panic upon error found.
 func MustPublish(ctx context.Context, event Event) {
 	if err := Publish(ctx, event); err != nil {
 		panic(err)
