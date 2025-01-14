@@ -12,7 +12,7 @@ Eventually provides a flexible event handling library that enables applications 
 ctx := context.TODO()
 
 var pub eventually.Publisher // either eventually.PubMux or eventually.Recorder
-ctx = eventually.PubWithContext(ctx, pub)
+ctx = eventually.ContextWithPub(ctx, pub)
 ```
 
 Eventually setup and put inside the context.Context.
