@@ -50,6 +50,10 @@ func (pm *PubMux) Publish(event Event) error {
 		return fmt.Errorf("eventually: event should be a struct (got: %v)", eventType.Kind())
 	}
 
+	if pm.handlers == nil {
+		return nil
+	}
+
 	handlers := pm.handlers[eventType]
 	for _, handler := range handlers {
 		invokeHandler(handler, event)
