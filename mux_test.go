@@ -15,7 +15,7 @@ func ExamplePubMux() {
 
 	// Setup the PubMux
 	mux := &eventually.PubMux{}
-	ctx := eventually.PubWithContext(context.Background(), mux)
+	ctx := eventually.ContextWithPub(context.Background(), mux)
 
 	// React to the events
 	mux.React(func(event OrderCompleted) {

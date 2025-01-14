@@ -15,7 +15,7 @@ func ExampleRecorder() {
 
 	// Setup Recorder
 	rec := &eventually.Recorder{}
-	ctx := eventually.PubWithContext(context.Background(), rec)
+	ctx := eventually.ContextWithPub(context.Background(), rec)
 
 	// Publish event through Recorder inside the context
 	eventually.Publish(ctx, OrderCompleted{OrderID: "123"})

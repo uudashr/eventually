@@ -21,8 +21,8 @@ type Publisher interface {
 	Publish(Event) error
 }
 
-// PubWithContext wrap the Publisher into the context.
-func PubWithContext(ctx context.Context, pub Publisher) context.Context {
+// ContextWithPub wrap the Publisher into the context.
+func ContextWithPub(ctx context.Context, pub Publisher) context.Context {
 	return context.WithValue(ctx, contextKey{}, pub)
 }
 
