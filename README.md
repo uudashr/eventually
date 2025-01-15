@@ -39,7 +39,7 @@ Raising event using eventually available in the context. It does nothing if the 
 ## Handling Events
 
 ```go
-pubMux := &eventually.PubMux{}
+pubMux := eventually.NewPubMux()
 pubMux.React(func(e OrderCompleted) {
     fmt.Printf("Order completed: %q\n", e.OrderID)
 })
