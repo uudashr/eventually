@@ -7,8 +7,6 @@ type Recorder struct {
 }
 
 // Publish the event to the recorder.
-func (r *Recorder) Publish(event Event) error {
+func (r *Recorder) Publish(event Event) {
 	r.Events = append(r.Events, event)
-
-	return nil
 }

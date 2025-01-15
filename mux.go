@@ -5,13 +5,15 @@ import (
 	"reflect"
 )
 
-// EventHandle is a function type that handle the event.
+// EventHandle is a function to handle the event.
 //
 // The form of function is:
 //
 //	func(event Event)
 //
-// where the [Event] is the event type (struct) that will be handled.
+// where the [Event] represent the event (struct).
+//
+// Event handling never fail, no error returned.
 //
 // Example:
 //
@@ -26,10 +28,15 @@ type PubMux struct {
 	handlers map[reflect.Type][]EventHandler
 }
 
+// NewPubMux allocates and returns a new PubMux.
+func NewPubMux() *PubMux {
+	return &PubMux{}
+}
+
 // React to an event with given fn as it's handler.
-func (pm *PubMux) React(fn EventHandler) error {
+func (pm *PubMux) React(fn EventHandler) {
 	if err := validateHandler(fn); err != nil {
-		return err
+		panic(err)
 	}
 
 	if pm.handlers == nil {
@@ -39,27 +46,23 @@ func (pm *PubMux) React(fn EventHandler) error {
 	fnType := reflect.TypeOf(fn)
 	fnTypeIn := fnType.In(0)
 	pm.handlers[fnTypeIn] = append(pm.handlers[fnTypeIn], fn)
-
-	return nil
 }
 
 // Publish the event. Publish will only fail if the event is not a struct.
-func (pm *PubMux) Publish(event Event) error {
+func (pm *PubMux) Publish(event Event) {
 	eventType := reflect.TypeOf(event)
 	if eventType.Kind() != reflect.Struct {
-		return fmt.Errorf("eventually: event should be a struct (got: %v)", eventType.Kind())
+		panic(fmt.Sprintf("eventually: event should be a struct (got: %v)", eventType.Kind()))
 	}
 
 	if pm.handlers == nil {
-		return nil
+		return
 	}
 
 	handlers := pm.handlers[eventType]
 	for _, handler := range handlers {
 		invokeHandler(handler, event)
 	}
-
-	return nil
 }
 
 func invokeHandler(handler EventHandler, event Event) {
