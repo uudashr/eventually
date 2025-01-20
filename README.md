@@ -5,17 +5,14 @@ Eventually provides a flexible event handling library that enables applications 
 
 ## Usage
 
-
-### Setup Eventually
+### Setup Publisher
 
 ```go
-ctx := context.TODO()
-
 var pub eventually.Publisher // either eventually.PubMux or eventually.Recorder
-ctx = eventually.ContextWithPub(ctx, pub)
+ctx = eventually.ContextWithPub(context.Background(), pub)
 ```
 
-Eventually setup and put inside the context.Context.
+We put `Publisher` inside the `context.Context` so it can be `Publish` anywhere as long as the context pass through the caller.
 
 ### Define Event
 ```go
@@ -24,9 +21,9 @@ type OrderCompleted struct {
 }
 ```
 
-Event was defined as struct. The struct can have any fields that represent the event data.
+`Event` was defined as struct. The struct can have any fields that represent the event data.
 
-### Raising an Event
+### Publish Event
 
 ```go
 eventually.Publish(ctx, OrderCompleted{
@@ -34,18 +31,49 @@ eventually.Publish(ctx, OrderCompleted{
 })
 ```
 
-Raising event using eventually available in the context. It does nothing if the `Eventually` is not available in the context.
+Publish event using `Publisher` available in the context. If there is no `Publisher` in the context, it will do nothing.
 
-## Handling Events
+### Handling Events
+
+There are 2 way to hanlding event, is by using `PubMux` or `Recorder`.
+
+#### PubMux
+`PubMux` is a multiplexer that can handle event based on it's type.
 
 ```go
-pubMux := eventually.NewPubMux()
-pubMux.React(func(e OrderCompleted) {
+// Setup PubMux
+mux := eventually.NewPubMux()
+ctx = eventually.ContextWithPub(context.Background(), mux)
+
+// Listen and handle the event
+mux.React(func(e OrderCompleted) {
     fmt.Printf("Order completed: %q\n", e.OrderID)
+})
+
+// Publish event
+eventually.Publish(ctx, OrderCompleted{
+    OrderID: "123",
 })
 ```
 
-It will handle all events that match the type `OrderCompleted`.
+It will handle all events that match the `OrderCompleted` type.
+
+#### Recorder
+`Recorder` records the published events.
+
+```go
+// Setup Recorder
+var rec := eventually.NewRecorder()
+ctx := eventually.ContextWithPub(context.Background(), rec)
+
+// Publish event
+eventually.Publish(ctx, OrderCompleted{
+    OrderID: "123",
+})
+
+// Print the recorded events
+fmt.Println(rec.Events)
+```
 
 ## Related Links
 - [A better domain events pattern](https://lostechies.com/jimmybogard/2014/05/13/a-better-domain-events-pattern/)
