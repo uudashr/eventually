@@ -4,7 +4,7 @@ import (
 	"context"
 )
 
-// Event represent specific event. It must be a struct type.
+// Event represents specific event. It must be a struct type.
 //
 // Example:
 //
@@ -15,18 +15,20 @@ type Event any
 
 type contextKey struct{}
 
-// Publisher interface for event publishing.
+// Publisher publishes [Event].
 type Publisher interface {
-	// Publish the event.
+	// Publish event.
 	Publish(Event)
 }
 
-// ContextWithPub wrap the Publisher into the context.
+// ContextWithPub wraps the pub and makes it available to the returned [context.Context].
 func ContextWithPub(ctx context.Context, pub Publisher) context.Context {
 	return context.WithValue(ctx, contextKey{}, pub)
 }
 
-// Publish the event to the Publisher in the context.
+// Publish event using [Publisher] available inside the ctx.
+//
+// If the [Publisher] is not available in the ctx, it will do nothing.
 func Publish(ctx context.Context, event Event) {
 	pub, ok := ctx.Value(contextKey{}).(Publisher)
 	if !ok {

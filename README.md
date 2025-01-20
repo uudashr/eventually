@@ -1,7 +1,9 @@
 [![Go Reference](https://pkg.go.dev/badge/github.com/uudashr/eventually.svg)](https://pkg.go.dev/github.com/uudashr/eventually)
 
 # Eventually
-Eventually provides a flexible event handling library that enables applications to react to various types of events dynamically. The core functionality revolves around defining, raising, and handling events that are structured as Go structs.
+Eventually provides a flexible event handling library that enables applications 
+to react to various types of events dynamically. The core functionality revolves 
+around defining, publishing, and handling events.
 
 ## Usage
 
@@ -12,7 +14,8 @@ var pub eventually.Publisher // either eventually.PubMux or eventually.Recorder
 ctx = eventually.ContextWithPub(context.Background(), pub)
 ```
 
-We put `Publisher` inside the `context.Context` so it can be `Publish` anywhere as long as the context pass through the caller.
+We put `Publisher` inside the `context.Context` so it can be `Publish` anywhere 
+as long as the context pass through the caller.
 
 ### Define Event
 ```go
@@ -21,7 +24,8 @@ type OrderCompleted struct {
 }
 ```
 
-`Event` was defined as struct. The struct can have any fields that represent the event data.
+`Event` was defined as struct. The struct can have any fields that represent 
+the event data.
 
 ### Publish Event
 
@@ -31,7 +35,8 @@ eventually.Publish(ctx, OrderCompleted{
 })
 ```
 
-Publish event using `Publisher` available in the context. If there is no `Publisher` in the context, it will do nothing.
+Publish event using `Publisher` available in the context. If there is no 
+`Publisher` in the context, it will do nothing.
 
 ### Handling Events
 

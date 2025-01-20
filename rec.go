@@ -1,12 +1,13 @@
 package eventually
 
-// Recorder record the events.
-// The events will be recorded on the Events.
+// Recorder records the events.
+//
+// The events will be recorded the the Events slice.
 type Recorder struct {
 	Events []Event
 }
 
-// NewRecorder allocates and returns a new Recorder.
+// NewRecorder allocates and returns a new [Recorder].
 func NewRecorder() *Recorder {
 	return &Recorder{}
 }

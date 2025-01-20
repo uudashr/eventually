@@ -5,7 +5,7 @@ import (
 	"reflect"
 )
 
-// EventHandle is a function to handle the event.
+// EventHandle is a function for event handling.
 //
 // The form of function is:
 //
@@ -13,7 +13,7 @@ import (
 //
 // where the [Event] represent the event (struct).
 //
-// Event handling never fail, no error returned.
+// Event handling never fails, no error is returned.
 //
 // Example:
 //
@@ -23,7 +23,7 @@ import (
 //	 })
 type EventHandler any
 
-// PubMux is a multiplexer for events. It will route events to it's handler.
+// PubMux is a multiplexer for events. It will route events to its handlers.
 type PubMux struct {
 	handlers map[reflect.Type][]EventHandler
 }
@@ -33,7 +33,11 @@ func NewPubMux() *PubMux {
 	return &PubMux{}
 }
 
-// React to an event with given fn as it's handler.
+// React will handle the published event.
+//
+// It will handle only the event type defined by the fn.
+// The fn needs to be a valid [EventHandler], otherwise it will panic.
+// Multiple handlers can be registered for the same event type.
 func (pm *PubMux) React(fn EventHandler) {
 	if err := validateHandler(fn); err != nil {
 		panic(err)
@@ -48,7 +52,9 @@ func (pm *PubMux) React(fn EventHandler) {
 	pm.handlers[fnTypeIn] = append(pm.handlers[fnTypeIn], fn)
 }
 
-// Publish the event. Publish will only fail if the event is not a struct.
+// Publish the event.
+//
+// The event needs to be a valid [Event], otherwise it will panic.
 func (pm *PubMux) Publish(event Event) {
 	eventType := reflect.TypeOf(event)
 	if eventType.Kind() != reflect.Struct {
