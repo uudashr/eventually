@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/uudashr/eventually"
+	"github.com/uudashr/eventually/v2"
 )
 
 func ExamplePubMux() {
@@ -14,7 +14,7 @@ func ExamplePubMux() {
 	}
 
 	// Setup the PubMux
-	mux := &eventually.PubMux{}
+	mux := eventually.NewPubMux()
 	ctx := eventually.ContextWithPub(context.Background(), mux)
 
 	// React to the events

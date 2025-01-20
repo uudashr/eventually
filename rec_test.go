@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/uudashr/eventually"
+	"github.com/uudashr/eventually/v2"
 )
 
 func ExampleRecorder() {
@@ -14,7 +14,7 @@ func ExampleRecorder() {
 	}
 
 	// Setup Recorder
-	rec := &eventually.Recorder{}
+	rec := eventually.NewRecorder()
 	ctx := eventually.ContextWithPub(context.Background(), rec)
 
 	// Publish event through Recorder inside the context
