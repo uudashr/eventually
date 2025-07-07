@@ -47,7 +47,7 @@ There are 2 way to hanlding event, is by using `PubMux` or `Recorder`.
 
 ```go
 // Setup PubMux
-mux := eventually.NewPubMux()
+mux := new(eventually.PubMux)
 ctx = eventually.ContextWithPub(context.Background(), mux)
 
 // Listen and handle the event
@@ -68,7 +68,7 @@ It will handle all events that match the `OrderCompleted` type.
 
 ```go
 // Setup Recorder
-var rec := eventually.NewRecorder()
+var rec := new(eventually.Recorder)
 ctx := eventually.ContextWithPub(context.Background(), rec)
 
 // Publish event
