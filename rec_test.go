@@ -14,7 +14,7 @@ func ExampleRecorder() {
 	}
 
 	// Setup Recorder
-	rec := eventually.NewRecorder()
+	rec := new(eventually.Recorder)
 	ctx := eventually.ContextWithPub(context.Background(), rec)
 
 	// Publish event through Recorder inside the context
