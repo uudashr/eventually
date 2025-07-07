@@ -28,11 +28,6 @@ type PubMux struct {
 	handlers map[reflect.Type][]EventHandler
 }
 
-// NewPubMux allocates and returns a new PubMux.
-func NewPubMux() *PubMux {
-	return &PubMux{}
-}
-
 // React will handle the published event.
 //
 // It will handle only the event type defined by the fn.
