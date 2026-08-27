@@ -33,7 +33,7 @@ type PubMux struct {
 // It will handle only the event type defined by the fn.
 // The fn needs to be a valid [EventHandler], otherwise it will panic.
 // Multiple handlers can be registered for the same event type.
-func (pm *PubMux) React(fn EventHandler) {
+func (pm *PubMux) React[E Event](fn func(E)) {
 	if err := validateHandler(fn); err != nil {
 		panic(err)
 	}
@@ -66,7 +66,7 @@ func (pm *PubMux) Publish(event Event) {
 	}
 }
 
-func invokeHandler(handler EventHandler, event Event) {
+func invokeHandler[E Event](handler EventHandler, event E) {
 	fnValue := reflect.ValueOf(handler)
 	eventValue := reflect.ValueOf(event)
 	fnValue.Call([]reflect.Value{eventValue})
