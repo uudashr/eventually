@@ -5,7 +5,7 @@ import (
 	"reflect"
 )
 
-// EventHandle is a function for event handling.
+// handler is a function for event handling.
 //
 // The form of function is:
 //
@@ -21,17 +21,17 @@ import (
 //	 pubMux.React(func(event OrderCompleted) {
 //		    // handle the event
 //	 })
-type EventHandler any
+type handler any
 
 // PubMux is a multiplexer for events. It will route events to its handlers.
 type PubMux struct {
-	handlers map[reflect.Type][]EventHandler
+	handlers map[reflect.Type][]handler
 }
 
 // React will handle the published event.
 //
 // It will handle only the event type defined by the fn.
-// The fn needs to be a valid [EventHandler], otherwise it will panic.
+// The fn needs to be a valid [handler], otherwise it will panic.
 // Multiple handlers can be registered for the same event type.
 func (pm *PubMux) React[E Event](fn func(E)) {
 	if err := validateHandler(fn); err != nil {
@@ -39,7 +39,7 @@ func (pm *PubMux) React[E Event](fn func(E)) {
 	}
 
 	if pm.handlers == nil {
-		pm.handlers = make(map[reflect.Type][]EventHandler)
+		pm.handlers = make(map[reflect.Type][]handler)
 	}
 
 	fnType := reflect.TypeOf(fn)
@@ -66,13 +66,13 @@ func (pm *PubMux) Publish(event Event) {
 	}
 }
 
-func invokeHandler[E Event](handler EventHandler, event E) {
-	fnValue := reflect.ValueOf(handler)
+func invokeHandler[E Event](fn handler, event E) {
+	fnValue := reflect.ValueOf(fn)
 	eventValue := reflect.ValueOf(event)
 	fnValue.Call([]reflect.Value{eventValue})
 }
 
-func validateHandler(fn EventHandler) error {
+func validateHandler(fn handler) error {
 	fnType := reflect.TypeOf(fn)
 	if fnType.Kind() != reflect.Func {
 		return fmt.Errorf("eventually: fn EventHandler is not a function (got: %v)", fnType.Kind())
