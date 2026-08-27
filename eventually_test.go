@@ -35,7 +35,7 @@ func TestReflect(t *testing.T) {
 		t.Errorf("got: %v, want: %v", got, want)
 	}
 
-	if got, want := ht.Out(0), reflect.TypeOf((*error)(nil)).Elem(); got != want {
+	if got, want := ht.Out(0), reflect.TypeFor[error](); got != want {
 		t.Errorf("got: %v, want: %v", got, want)
 	}
 
@@ -44,7 +44,7 @@ func TestReflect(t *testing.T) {
 	}
 
 	inVal := reflect.ValueOf(ht.In(0)).Interface()
-	if got, want := inVal, reflect.TypeOf(OrderCompleted{}); got != want {
+	if got, want := inVal, reflect.TypeFor[OrderCompleted](); got != want {
 		t.Errorf("got: %v, want: %v", got, want)
 	}
 }
